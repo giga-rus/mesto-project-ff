@@ -1,37 +1,58 @@
 import './pages/index.css';
 
 import {initialCards} from './scripts/cards.js';
+import {createCard, deleteCard} from './scripts/card.js';
+import {openModal, closeModal} from './scripts/modal.js';
 
-// @todo: Темплейт карточки
-const cardTemplate = document.querySelector("#card-template").content;
-
-// @todo: DOM узлы
+// DOM узлы
 const cardsSection = document.querySelector(".places__list");
 
-// @todo: Функция создания карточки
-function createCard (card, deleteFunction) {
-  const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
-  const cardImage = cardElement.querySelector(".card__image");
-  const cardTitle = cardElement.querySelector(".card__title");
-  const deleteButton = cardElement.querySelector(".card__delete-button");
+// Edit
+const popupEdit = document.querySelector(".popup_type_edit");
+const btnOpenEdit = document.querySelector(".profile__edit-button");
+const btnCloseEdit = popupEdit.querySelector(".popup__close");
+const formElement = popupEdit.querySelector(".popup__form");
+const nameInput = formElement.querySelector(".popup__input_type_name");
+const jobInput = formElement.querySelector(".popup__input_type_description");
+const profileTitle = document.querySelector(".profile__title");
+const profileDescription = document.querySelector(".profile__description");
 
-  cardImage.src = card.link;
-  cardImage.alt = card.name;
-  cardTitle.textContent = card.name;
+btnOpenEdit.addEventListener('click', () => {
+  openModal(popupEdit);
+  nameInput.value = profileTitle.textContent;
+  jobInput.value = profileDescription.textContent;
+})
 
-  deleteButton.addEventListener('click', () => {
-    deleteFunction(cardElement);
-  });
+btnCloseEdit.addEventListener('click', () => {
+  closeModal(popupEdit);
+})
 
-  return cardElement;
+function handleFormSubmit(evt) {
+  evt.preventDefault();
+  profileTitle.textContent = nameInput.value;
+  profileDescription.textContent = jobInput.value;
+  closeModal(popupEdit);
 }
 
-// @todo: Функция удаления карточки
-function deleteCard(elem) {
-  elem.remove();
-}
+formElement.addEventListener('submit', handleFormSubmit); 
 
-// @todo: Вывести карточки на страницу
+// New Card
+const popupNewCard = document.querySelector(".popup_type_new-card");
+const btnOpenNewCard = document.querySelector(".profile__add-button");
+const btnCloseNewCard = popupNewCard.querySelector(".popup__close");
+
+btnOpenNewCard.addEventListener('click', () => {
+  openModal(popupNewCard);
+})
+
+btnCloseNewCard.addEventListener('click', () => {
+  closeModal(popupNewCard);
+})
+
+// Open Image
+const popupOpenImage = document.querySelector(".popup_type_image");
+
+// Вывести карточки на страницу
 function addCards() {
   initialCards.forEach((elem) => {
     const card = createCard(elem, deleteCard);
