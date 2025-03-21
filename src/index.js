@@ -23,9 +23,14 @@ btnOpenEdit.addEventListener('click', () => {
   jobInput.value = profileDescription.textContent;
 })
 
-btnCloseEdit.addEventListener('click', () => {
-  closeModal(popupEdit);
-})
+// функция закрытия крестиком
+function closeButton (btn, popup) {
+  btn.addEventListener('click', () => {
+    closeModal(popup);
+  })
+}
+
+closeButton(btnCloseEdit, popupEdit);
 
 function handleFormEditSubmit(evt) {
   evt.preventDefault();
@@ -48,9 +53,7 @@ btnOpenNewCard.addEventListener('click', () => {
   openModal(popupNewCard);
 })
 
-btnCloseNewCard.addEventListener('click', () => {
-  closeModal(popupNewCard);
-})
+closeButton(btnCloseNewCard, popupNewCard);
 
 function handleFormNewCardSubmit(evt) {
   evt.preventDefault();
@@ -71,9 +74,7 @@ const btnCloseZoomImage = popupZoomImage.querySelector(".popup__close");
 const photoZoneZoomImage = popupZoomImage.querySelector(".popup__image");
 const photoCaptionZoomImage = popupZoomImage.querySelector(".popup__caption");
 
-btnCloseZoomImage.addEventListener('click', () => {
-  closeModal(popupZoomImage);
-});
+closeButton(btnCloseZoomImage, popupZoomImage);
 
 function zoomImage(elem) {
   openModal(popupZoomImage);
