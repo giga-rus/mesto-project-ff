@@ -3,9 +3,18 @@ import './pages/index.css';
 import {initialCards} from './scripts/cards.js';
 import {createCard, deleteCard, likeCard} from './scripts/card.js';
 import {openModal, closeModal} from './scripts/modal.js';
+import {enableValidation, clearValidation} from './scripts/validation.js';
 
 // DOM узлы
 const cardsSection = document.querySelector(".places__list");
+const configsForValid = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+};
 
 // Edit
 const popupEdit = document.querySelector(".popup_type_edit");
@@ -21,6 +30,7 @@ btnOpenEdit.addEventListener('click', () => {
   openModal(popupEdit);
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
+  clearValidation(formEdit, configsForValid);
 })
 
 // функция закрытия крестиком
@@ -51,6 +61,8 @@ const urlInput = formNewCard.querySelector(".popup__input_type_url");
 
 btnOpenNewCard.addEventListener('click', () => {
   openModal(popupNewCard);
+  formNewCard.reset();
+  clearValidation(formNewCard, configsForValid);
 })
 
 closeButton(btnCloseNewCard, popupNewCard);
@@ -92,3 +104,4 @@ function addCards() {
 }
 
 addCards();
+enableValidation(configsForValid);
