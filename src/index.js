@@ -4,6 +4,7 @@ import {initialCards} from './scripts/cards.js';
 import {createCard, deleteCard, likeCard} from './scripts/card.js';
 import {openModal, closeModal} from './scripts/modal.js';
 import {enableValidation, clearValidation} from './scripts/validation.js';
+import {getData} from './scripts/api.js';
 
 // DOM узлы
 const cardsSection = document.querySelector(".places__list");
@@ -33,7 +34,7 @@ btnOpenEdit.addEventListener('click', () => {
   clearValidation(formEdit, configsForValid);
 })
 
-// функция закрытия крестиком
+// Функция закрытия крестиком
 function closeButton (btn, popup) {
   btn.addEventListener('click', () => {
     closeModal(popup);
@@ -102,6 +103,9 @@ function addCards() {
     cardsSection.append(card);
   });
 }
-
 addCards();
+
+// Запуск валидации
 enableValidation(configsForValid);
+
+getData();
