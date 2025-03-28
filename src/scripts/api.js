@@ -16,30 +16,58 @@ const getRes = (res) => {
 };
 
 // Загрузка информации о пользователе с сервера
-const getUser = () => {
+export const getUser = () => {
   return fetch(`${configsForApi.url}/users/me`, {
     method: 'GET',
     headers: configsForApi.headers,
   })
   .then(res => getRes(res))
   .then((result) => {
-    console.log(result);
+    return result;
   }); 
 };
 
 // Загрузка карточек с сервера
-const getCards = () => {
+export const getCards = () => {
   return fetch(`${configsForApi.url}/cards`, {
     method: 'GET',
     headers: configsForApi.headers,
   })
   .then(res => getRes(res))
   .then((result) => {
-    console.log(result);
+    return result;
   }); 
 };
 
-// Получение всех данных с сервера
-export const getData = () => {
-  return Promise.all([getUser(), getCards()]);
+// Редактирование профиля
+export const editProfile = (userName, userDescription) => {
+  return fetch(`${configsForApi.url}/users/me`, {
+    method: 'PATCH',
+    headers: configsForApi.headers,
+    body: JSON.stringify({
+      name: userName,
+      about: userDescription
+    })
+  })
+  .then(res => getRes(res))
+  .then((result) => {
+    return result;
+  }); 
+};
+
+// Добавление новой карточки
+export const postNewCard = (cardName, cardLink) => {
+  return fetch(`${configsForApi.url}/cards`, {
+    method: 'POST',
+    headers: configsForApi.headers,
+    body: JSON.stringify({
+      name: cardName,
+      link: cardLink
+    })
+  })
+  .then(res => getRes(res))
+  .then((result) => {
+    console.log(result);
+    return result;
+  }); 
 };
