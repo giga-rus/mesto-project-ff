@@ -21,10 +21,7 @@ export const getUser = () => {
     method: 'GET',
     headers: configsForApi.headers,
   })
-  .then(res => getRes(res))
-  .then((result) => {
-    return result;
-  }); 
+  .then(res => getRes(res));
 };
 
 // Загрузка карточек с сервера
@@ -33,10 +30,7 @@ export const getCards = () => {
     method: 'GET',
     headers: configsForApi.headers,
   })
-  .then(res => getRes(res))
-  .then((result) => {
-    return result;
-  }); 
+  .then(res => getRes(res));
 };
 
 // Редактирование профиля
@@ -49,10 +43,7 @@ export const editProfile = (userName, userDescription) => {
       about: userDescription
     })
   })
-  .then(res => getRes(res))
-  .then((result) => {
-    return result;
-  }); 
+  .then(res => getRes(res));
 };
 
 // Добавление новой карточки
@@ -65,9 +56,44 @@ export const postNewCard = (cardName, cardLink) => {
       link: cardLink
     })
   })
-  .then(res => getRes(res))
-  .then((result) => {
-    console.log(result);
-    return result;
-  }); 
+  .then(res => getRes(res));
+};
+
+// Удаление карточки
+export const deleteCardInServer = (cardID) => {
+  return fetch(`${configsForApi.url}/cards/${cardID}`, {
+    method: 'DELETE',
+    headers: configsForApi.headers
+  })
+  .then(res => getRes(res));
+};
+
+// Постановка лайка
+export const addLike = (cardID) => {
+  return fetch(`${configsForApi.url}/cards/likes/${cardID}`, {
+    method: 'PUT',
+    headers: configsForApi.headers
+  })
+  .then(res => getRes(res));
+};
+
+// Снятие лайка
+export const deleteLike = (cardID) => {
+  return fetch(`${configsForApi.url}/cards/likes/${cardID}`, {
+    method: 'DELETE',
+    headers: configsForApi.headers
+  })
+  .then(res => getRes(res));
+};
+
+// Обновление аватара пользователя
+export const editAvatar = (avatarLink) => {
+  return fetch(`${configsForApi.url}/users/me/avatar`, {
+    method: 'PATCH',
+    headers: configsForApi.headers,
+    body: JSON.stringify({
+      avatar: avatarLink
+    })
+  })
+  .then(res => getRes(res));
 };

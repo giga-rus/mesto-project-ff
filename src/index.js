@@ -3,7 +3,10 @@ import './pages/index.css';
 import {createCard, deleteCard, likeCard} from './scripts/card.js';
 import {openModal, closeModal} from './scripts/modal.js';
 import {enableValidation, clearValidation} from './scripts/validation.js';
-import {getUser, getCards, editProfile, postNewCard} from './scripts/api.js';
+import {getUser, getCards, editProfile, postNewCard, editAvatar} from './scripts/api.js';
+
+// ID пользователя
+let userID;
 
 // DOM узлы
 const cardsSection = document.querySelector(".places__list");
@@ -16,6 +19,11 @@ const configsForValid = {
   errorClass: 'popup__error_visible'
 };
 
+// Фунцкия активации лоадера
+const activeLoading = (isLoading, button) => {
+  button.textContent = isLoading ? "Сохранение..." : "Сохранить";
+};
+
 // Форма редактирования
 const popupEdit = document.querySelector(".popup_type_edit");
 const btnOpenEdit = document.querySelector(".profile__edit-button");
@@ -25,6 +33,7 @@ const nameInput = formEdit.querySelector(".popup__input_type_name");
 const jobInput = formEdit.querySelector(".popup__input_type_description");
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
+const btnSaveEdit = formEdit.querySelector(".popup__button");
 
 // Открытие окна редактирования
 btnOpenEdit.addEventListener('click', () => {
@@ -47,6 +56,7 @@ closeButton(btnCloseEdit, popupEdit);
 // Функция обработки формы окна редактирования
 function handleFormEditSubmit(evt) {
   evt.preventDefault();
+  activeLoading(true, btnSaveEdit);
   editProfile(nameInput.value, jobInput.value)
     .then((res) => {
       profileTitle.textContent = res.name;
@@ -55,6 +65,9 @@ function handleFormEditSubmit(evt) {
     })
     .catch((error) => {
       console.log(error);
+    })
+    .finally(() => {
+      activeLoading(false, btnSaveEdit);
     });
 }
 
@@ -68,6 +81,7 @@ const btnCloseNewCard = popupNewCard.querySelector(".popup__close");
 const formNewCard = popupNewCard.querySelector(".popup__form");
 const textInput = formNewCard.querySelector(".popup__input_type_card-name");
 const urlInput = formNewCard.querySelector(".popup__input_type_url");
+const btnSaveNewCard = formNewCard.querySelector(".popup__button");
 
 // Открытие окна создания новой карты
 btnOpenNewCard.addEventListener('click', () => {
@@ -82,14 +96,21 @@ closeButton(btnCloseNewCard, popupNewCard);
 // Функция обработки формы окна создания новой карты
 function handleFormNewCardSubmit(evt) {
   evt.preventDefault();
-  const newCard = {
-    name: textInput.value,
-    link: urlInput.value
-  };
-  postNewCard(newCard.name, newCard.link);
-  cardsSection.prepend(createCard(newCard, deleteCard, likeCard, zoomImage));
-  formNewCard.reset();
-  closeModal(popupNewCard);
+  const cardName = textInput.value;
+  const cardLink = urlInput.value;
+  activeLoading(true, btnSaveNewCard);
+  postNewCard(cardName, cardLink)
+  .then((res) => {
+    cardsSection.prepend(createCard(res, deleteCard, likeCard, zoomImage, userID));
+    formNewCard.reset();
+    closeModal(popupNewCard);
+  })
+  .catch((error) => {
+    console.log(error);
+  })
+  .finally(() => {
+    activeLoading(false, btnSaveNewCard);
+  });
 }
 
 // Слушатель формы окна создания новой карты
@@ -114,6 +135,44 @@ function zoomImage(elem) {
 
 // Форма редактирования аватара
 const profileAvatar = document.querySelector(".profile__image");
+const btnOpenAvatar = document.querySelector(".profile__image-edit");
+const popupAvatar = document.querySelector(".popup_type_edit-avatar");
+const btnCloseAvatar = popupAvatar.querySelector(".popup__close");
+const formAvatar = popupAvatar.querySelector(".popup__form");
+const urlInputAvatar = formAvatar.querySelector(".popup__input_type_url");
+const btnSaveAvatar = formAvatar.querySelector(".popup__button");
+
+// Открытие окна редактирования аватара
+btnOpenAvatar.addEventListener('click', () => {
+  openModal(popupAvatar);
+  formAvatar.reset();
+  clearValidation(formAvatar, configsForValid);
+})
+
+// Закрытие окна редактирования аватара
+closeButton(btnCloseAvatar, popupAvatar);
+
+// Функция обработки формы окна редактирования аватара
+function handleFormAvatarSubmit(evt) {
+  evt.preventDefault();
+  const avatarLink = urlInputAvatar.value;
+  activeLoading(true, btnSaveAvatar);
+  editAvatar(avatarLink)
+  .then((res) => {
+    profileAvatar.style.backgroundImage = `url(${res.avatar})`;
+    formAvatar.reset();
+    closeModal(popupAvatar);
+  })
+  .catch((error) => {
+    console.log(error);
+  })
+  .finally(() => {
+    activeLoading(false, btnSaveAvatar);
+  });
+}
+
+// Слушатель формы окна редактирования аватара
+formAvatar.addEventListener('submit', handleFormAvatarSubmit); 
 
 // Получение всех данных с сервера и отображение на странице
 const getData = () => {
@@ -123,8 +182,9 @@ const getData = () => {
     profileTitle.textContent = userData.name;
     profileDescription.textContent = userData.about;
     profileAvatar.style.backgroundImage = `url(${userData.avatar})`;
+    userID = userData._id;
     cardsData.forEach((elem) => {
-      const card = createCard(elem, deleteCard, likeCard, zoomImage);
+      const card = createCard(elem, deleteCard, likeCard, zoomImage, userID);
       cardsSection.append(card);
     });
   })
