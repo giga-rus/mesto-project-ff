@@ -55,23 +55,12 @@ export function deleteCard (elem, cardId) {
 
 // Функция постановки или снятия лайка
 export function likeCard (elem, cardId, countLikes) {
-  if (elem.classList.contains("card__like-button_is-active")) {
-    deleteLike(cardId)
-    .then((res) => {
-      elem.classList.toggle("card__like-button_is-active");
-      countLikes.textContent = res.likes.length;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  } else {
-    addLike(cardId)
-    .then((res) => {
-      elem.classList.toggle("card__like-button_is-active");
-      countLikes.textContent = res.likes.length;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
+
+  const likeMethod = elem.classList.contains("card__like-button_is-active") ? deleteLike : addLike;
+  likeMethod(cardId) 
+          .then((res) => {
+             elem.classList.toggle("card__like-button_is-active"); 
+             countLikes.textContent = res.likes.length;
+          })
+  .catch(err => console.log(err));
 }
